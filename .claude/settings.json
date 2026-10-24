@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(bash ralph/bin/preflight.sh *)",
+      "Bash(python3 ralph/bin/lint.py *)",
+      "Bash(tools/check_all.sh *)",
+      "Bash(CHECK_FAST=1 tools/check_all.sh *)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/ralph/bin/session-start.sh",
+            "timeout": 300
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+# ループの作業用（検算ログ・ループのログ）
+.ralph/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Claude Code の個人用設定
+.claude/settings.local.json
+CLAUDE.local.md

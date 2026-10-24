@@ -1,8 +1,8 @@
-# CLAUDE.md
+@AGENTS.md
 
-このリポジトリは Ralph ループ（自律研究ループ）で理論考察を進めている。
+## Claude Code で使うもの
 
-- 研究・執筆・検算の作業をする前に、必ず [ralph/RULES.md](ralph/RULES.md)（規約）と [ralph/GOAL.md](ralph/GOAL.md)（目標）を読む。
-- ループの1イテレーションを実行するよう頼まれたら [ralph/PROMPT.md](ralph/PROMPT.md) に従う。
-- ループの仕組みとファイルの役割は [ralph/README.md](ralph/README.md) を参照。
-- 対話セッションで研究を進めた場合も、ループが続きを拾えるように PLAN.md の更新と journal のエントリ追加を行う（書式は RULES.md）。
+- 査読：`referee` サブエージェント（[.claude/agents/referee.md](.claude/agents/referee.md)）。theory/ に結果を足した・直したら依頼する。読み取り専用で、新しい文脈から点検する。
+- 対話セッションの引き継ぎ：`/ralph-handoff`（[.claude/skills/ralph-handoff/SKILL.md](.claude/skills/ralph-handoff/SKILL.md)）。
+- クラウドセッションでは開始時に requirements.txt のパッケージが入る（.claude/settings.json の SessionStart フック）。
+- 論文 PDF など大きな資料は、サブエージェントに読ませて要点だけを受け取り、メインの文脈を節約する。

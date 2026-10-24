@@ -1,0 +1,14 @@
+{
+  "_説明": "主張台帳。GOAL.md の問いに答える主要な結果を1件1主張で登録する。書式と status の条件は ralph/RULES.md「主張台帳」。主張は削除せず、誤りなら status を refuted にする。",
+  "_例": {
+    "id": "C1",
+    "question": "Q1",
+    "statement": "弱結合極限での基底エネルギーの閉形式 E_0(λ) を得た",
+    "location": "theory/01-example/energy.md#(2.3)",
+    "check": "tools/01-example/check.sh",
+    "status": "draft",
+    "review": null,
+    "note": ""
+  },
+  "claims": []
+}
