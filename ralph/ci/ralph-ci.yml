@@ -1,0 +1,52 @@
+# 検算と台帳の機械チェック。エージェントの自己申告に頼らない最後の関門。
+# 有効にするには、このファイルを .github/workflows/ralph-ci.yml に移す（ralph/README.md「新しいリポジトリを作るとき」）。
+# - すべての PR と main への push：tools/check_all.sh（フル）と ralph/bin/lint.py
+# - タイトルが [ralph] で始まる PR：加えて差分の規則（人間管理ファイル・journal の追記のみ・主張の削除禁止）
+# 自動マージ（ralph/config.env の RALPH_MERGE=auto）を使うときは、ブランチ保護でこのチェックを必須にする。
+name: ralph-ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: 依存パッケージ
+        run: |
+          if grep -qvE '^[[:space:]]*(#|$)' requirements.txt 2>/dev/null; then
+            python -m pip install -q -r requirements.txt
+          fi
+
+      - name: 検算（tools/check_all.sh）
+        run: bash tools/check_all.sh
+
+      - name: 機械チェック（ralph/bin/lint.py）
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ] && [[ "$PR_TITLE" == "[ralph]"* ]]; then
+            python ralph/bin/lint.py --base "origin/$BASE_REF" --loop
+          else
+            python ralph/bin/lint.py
+          fi
+
+      - name: 検算ログ（失敗時）
+        if: failure()
+        run: |
+          for f in .ralph/logs/*.log; do [ -e "$f" ] && { echo "::group::$f"; tail -n 50 "$f"; echo "::endgroup::"; }; done; true

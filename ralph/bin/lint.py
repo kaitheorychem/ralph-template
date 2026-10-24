@@ -31,7 +31,7 @@ MARKER_RE = re.compile(r"\b(TODO|FIXME|WIP|XXX)\b")
 PROTECTED = [
     "AGENTS.md", "CLAUDE.md", "README.md",
     "ralph/PROMPT.md", "ralph/RULES.md", "ralph/GOAL.md", "ralph/README.md",
-    "ralph/config.env", "ralph/loop.sh", "ralph/bin/*",
+    "ralph/config.env", "ralph/loop.sh", "ralph/bin/*", "ralph/ci/*",
     ".claude/*", ".github/*", "tools/check_all.sh", "refs/*",
 ]
 PROTECTED_EXCEPT = ["refs/notes/*", "refs/notes"]

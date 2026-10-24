@@ -40,7 +40,7 @@ preflight ─▶ 状況把握 ─▶ 完了判定 ─▶ タスク選択 ─▶ 
 | `tools/` | 数値検算。各トピックの `check.sh` と全体の `check_all.sh` | エージェント（check_all.sh は人間） |
 | `AGENTS.md` / `CLAUDE.md` | エージェントの入口（CLAUDE.md は AGENTS.md を読み込む） | 人間 |
 | `.claude/` | referee サブエージェント、/ralph-handoff スキル、SessionStart フック | 人間 |
-| `.github/workflows/ralph-ci.yml` | CI（検算と機械チェック） | 人間 |
+| `ralph/ci/ralph-ci.yml` | CI の定義（検算と機械チェック）。`.github/workflows/` に移して有効化する | 人間 |
 
 「人間」のファイルはループの外から方向を制御するためのもの。エージェントがこれらを変えると lint と CI が止める。
 
@@ -49,14 +49,15 @@ preflight ─▶ 状況把握 ─▶ 完了判定 ─▶ タスク選択 ─▶ 
 未記入の箇所には `TODO(human)` が入っている。`grep -rn 'TODO(human)' .` で一覧できる。
 
 1. このテンプレートからリポジトリを作る。
-2. [GOAL.md](GOAL.md) の `TODO(human)` をすべて埋める。**1つでも残っているとループは何もせずに終わる**。いちばん効くのは「検証の基準」：既知の極限、参照値、独立な計算手段。エージェントが自分の進み具合を判定できるかどうかはここで決まる。
-3. [theory/CONVENTIONS.md](../theory/CONVENTIONS.md) に単位系と符号の約束を書く（エージェントは教科書の慣習に引き戻されやすいので、違うものほど明記する）。
-4. [config.env](config.env) を確認する（ベースブランチ、マージ方針、1日の上限）。
-5. 必要なら [RULES.md](RULES.md) の「プロジェクト固有の規約」に書き足す。
-6. 先行研究を `refs/` に置き、GOAL.md の背景からリンクする。クラウド環境の既定のネットワーク設定では arXiv などに届かないことがあるので、読ませたい論文はファイルで置くのが確実。
-7. 検算に使うパッケージを `requirements.txt` に書く（既定は numpy・scipy・sympy・mpmath）。
-8. （任意）[PLAN.md](PLAN.md) の「必須」に最初のタスクを書く。空なら初回が GOAL から分解する。
-9. ルートの README.md の `TODO(human)` を埋める。
+2. **CI を有効にする**：`ralph/ci/ralph-ci.yml` を `.github/workflows/ralph-ci.yml` に移してコミットする（`mkdir -p .github/workflows && git mv ralph/ci/ralph-ci.yml .github/workflows/`）。GitHub の Web 画面で「Add file」から同じパスに中身を貼ってもよい。テンプレートの段階で有効になっていないのは、エージェント経由の push にはワークフローを書き込む権限が無いことが多いため。
+3. [GOAL.md](GOAL.md) の `TODO(human)` をすべて埋める。**1つでも残っているとループは何もせずに終わる**。いちばん効くのは「検証の基準」：既知の極限、参照値、独立な計算手段。エージェントが自分の進み具合を判定できるかどうかはここで決まる。
+4. [theory/CONVENTIONS.md](../theory/CONVENTIONS.md) に単位系と符号の約束を書く（エージェントは教科書の慣習に引き戻されやすいので、違うものほど明記する）。
+5. [config.env](config.env) を確認する（ベースブランチ、マージ方針、1日の上限）。
+6. 必要なら [RULES.md](RULES.md) の「プロジェクト固有の規約」に書き足す。
+7. 先行研究を `refs/` に置き、GOAL.md の背景からリンクする。クラウド環境の既定のネットワーク設定では arXiv などに届かないことがあるので、読ませたい論文はファイルで置くのが確実。
+8. 検算に使うパッケージを `requirements.txt` に書く（既定は numpy・scipy・sympy・mpmath）。
+9. （任意）[PLAN.md](PLAN.md) の「必須」に最初のタスクを書く。空なら初回が GOAL から分解する。
+10. ルートの README.md の `TODO(human)` を埋める。
 
 ## 動かし方
 
@@ -130,14 +131,14 @@ ralph/loop.sh 50
 
 `RALPH_MERGE=auto` にすると、エージェントは PR を作った後に自動マージを有効にし、CI が通れば GitHub がマージする。GitHub トリガーと組み合わせると、人間を待たずに次々と進む。
 
-- 準備：リポジトリ設定で「Allow auto-merge」を有効にし、ベースブランチのブランチ保護（またはルールセット）で CI のチェック `check`（ralph-ci）を必須にする。必須チェックが無いと自動マージは安全装置にならない。
+- 準備：CI を有効にした上で（「新しいリポジトリを作るとき」の手順2）、リポジトリ設定で「Allow auto-merge」を有効にし、ベースブランチのブランチ保護（またはルールセット）で CI のチェック `check`（ralph-ci）を必須にする。必須チェックが無いと自動マージは安全装置にならない。
 - 注意：小さな誤りが次の回の前提になって積み上がる。最初は `human` で10回ほど回し、referee と CI が実際に誤りを止めているのを確かめてから切り替える。`RALPH_MAX_PER_DAY` を必ず設定し、毎日 journal と claims に目を通す。
 
 ## 旧テンプレートからの移行
 
 旧版（PROMPT/RULES/GOAL/PLAN/QUESTIONS/journal だけの構成）で作ったリポジトリは次の順で移せる。
 
-1. 新しく加わったファイルをコピーする：AGENTS.md、CLAUDE.md、.claude/、.github/、.gitignore、requirements.txt、ralph/{PROMPT,RULES,README,NOTES}.md、ralph/config.env、ralph/claims.json、ralph/bin/、ralph/loop.sh、ralph/reviews/、tools/check_all.sh、theory/CONVENTIONS.md。
+1. 新しく加わったファイルをコピーする：AGENTS.md、CLAUDE.md、.claude/、ralph/ci/、.gitignore、requirements.txt、ralph/{PROMPT,RULES,README,NOTES}.md、ralph/config.env、ralph/claims.json、ralph/bin/、ralph/loop.sh、ralph/reviews/、tools/check_all.sh、theory/CONVENTIONS.md。
 2. GOAL.md を新しい書式に合わせる：コアの問いに Q1… を振り、「検証の基準」「範囲外」を書く（旧 RULES.md の「プロジェクト固有の規約」にあった整合チェックはここへ）。完了条件を新しいものに替える。
 3. 各 `tools/<topic>/README.md` の「検査の実行」コマンドを `tools/<topic>/check.sh` に移す。
 4. PLAN.md に「最優先（人間）」「査読指摘」「完了」の節を足し、「最優先（人間）」に「既存の theory/ の結果を claims.json に棚卸しする（status は検算の有無に応じて draft か checked）」と書く。棚卸しは次のイテレーションがやる。

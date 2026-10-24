@@ -31,7 +31,7 @@ Ralph ループのイテレーションに限らず、このリポジトリで�
 | `tools/NN-topic_name/` | 数値検算（theory と同じトピック名） |
 
 - 完成済みのトピックは原則書き換えない（新トピックへのリンク追記などの軽微なものを除く）。
-- **人間が管理するファイル**（エージェントは変更しない。lint が検出する）：AGENTS.md、CLAUDE.md、README.md、ralph/{PROMPT,RULES,GOAL,README}.md、ralph/config.env、ralph/loop.sh、ralph/bin/、.claude/、.github/、tools/check_all.sh、refs/（refs/notes/ を除く）。変えたほうがよいと思ったら QUESTIONS.md で提案する。
+- **人間が管理するファイル**（エージェントは変更しない。lint が検出する）：AGENTS.md、CLAUDE.md、README.md、ralph/{PROMPT,RULES,GOAL,README}.md、ralph/config.env、ralph/loop.sh、ralph/bin/、ralph/ci/、.claude/、.github/、tools/check_all.sh、refs/（refs/notes/ を除く）。変えたほうがよいと思ったら QUESTIONS.md で提案する。
 - ralph/ でエージェントが書くもの：PLAN.md、QUESTIONS.md（質問の追記と「反映済み」の付記）、NOTES.md、claims.json、journal/ と reviews/（新しいファイルの追加のみ）。
 
 ## 執筆スタイル
